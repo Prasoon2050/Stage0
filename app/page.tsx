@@ -1,14 +1,20 @@
+import CTA from "@/components/CTA"
+import Contact from "@/components/Contact"
+import Features from "@/components/Features"
+import FeaturesList from "@/components/FeaturesList"
+import HeroHeader from "@/components/HeroHeader"
+import Newsletter from "@/components/Newsletter"
+import ProductList from "@/components/ProductList"
+import Testimonial from "@/components/Testimonial"
+
 export default function Home() {
   return (
-    <div>
-      <p>Hero Header Section</p>
-      <p>Features Section</p>
-      <p>Features list section</p>
-      <p>Ecommerce Product list Section</p>
-      <p>Testimonial Section</p>
-      <p>CTA Section</p>
-      <p>Newsletter Section</p>
-      <p>Contact Section</p>
-    </div>
+    <>
+
+      <HeroHeader />
+      <Features />
+      <FeaturesList />
+      <Newsletter />
+    </>
   );
 }

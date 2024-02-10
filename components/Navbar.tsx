@@ -5,9 +5,9 @@ import Button from "./Button"
 
 const Navbar = () => {
   return (
-    <nav className="flexBetween max-container padding-container relative z-30 py-5">
+    <nav className="flexBetween max-container padding-container relative z-30 py-3">
       <Link href="/">
-        <Image src="/logo.png" alt="logo" width={74} height={29} />
+        <Image src="/Tee.png" alt="logo" width={130} height={40} />
       </Link>
 
       <ul className="hidden h-full gap-12 lg:flex">
