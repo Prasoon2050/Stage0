@@ -5,7 +5,7 @@ import FeaturesList from "@/components/FeaturesList"
 import HeroHeader from "@/components/HeroHeader"
 import Newsletter from "@/components/Newsletter"
 import ProductList from "@/components/ProductList"
-import Testimonial from "@/components/Testimonial"
+import Review from "@/components/Review"
 
 export default function Home() {
   return (
@@ -14,6 +14,7 @@ export default function Home() {
       <HeroHeader />
       <Features />
       <FeaturesList />
+      <ProductList />
       <Newsletter />
     </>
   );

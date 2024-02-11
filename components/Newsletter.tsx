@@ -26,7 +26,7 @@ const Newsletter = () => {
         <p className="regular-14 pb-8">By subscribing, you agree to our Terms and Conditions.</p>
       </div>
       <div>
-        <Image src="/Newsletter.gif" alt="Newsletter picture" width={400} height={400} />
+        <Image src="/Newsletter.gif" alt="Newsletter picture" width={600} height={400} />
       </div>
     </section>
   )

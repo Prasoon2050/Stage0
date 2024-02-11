@@ -83,3 +83,48 @@ export const NAV_LINKS = [
       '/wordpress.svg',
     ],
   };
+
+  // Card SECTION
+  export const C_HEADER = [
+    {
+      availabilities: [
+        'Available',
+        'Available',
+        'Not-vailable',
+        'Available',
+        'Not-Available',
+        'Available',
+      ],
+      createrNames: [
+        'Suraj',
+        'Prasoon',
+        'Prashant',
+        'Suraj',
+        'Prasoon',
+        'Prashant',
+      ],
+    },
+    {
+      title: 'Our Community',
+      links: ['Frontend Team', 'Backend Team', 'Production Team'],
+    },
+  ];
+  
+  export const C_BODY = {
+    title: 'Contact Us',
+    links: [
+      { label: 'Admin Officer', value: '123-456-7890' },
+      { label: 'Email Officer', value: 'printAI@gmail.com' },
+    ],
+  };
+  
+  export const C_FOOTER = {
+    title: 'Social',
+    links: [
+      '/facebook.svg',
+      '/instagram.svg',
+      '/twitter.svg',
+      '/youtube.svg',
+      '/wordpress.svg',
+    ],
+  };
