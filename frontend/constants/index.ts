@@ -1,9 +1,9 @@
 // NAVIGATION
 export const NAV_LINKS = [
     { href: '/', key: 'home', label: 'Home' },
-    { href: '/', key: 'Create Now', label: 'Create Now' },
-    { href: '/', key: 'product ', label: 'Product ' },
-    { href: '/', key: 'contact_us', label: 'Contact Us' },
+    { href: '/create', key: 'Create', label: 'Create' },
+    { href: '/product', key: 'product', label: 'Product' },
+    { href: '/contact', key: 'contact', label: 'Contact' },
   ];
   
   // CAMP SECTION
@@ -128,3 +128,4 @@ export const NAV_LINKS = [
       '/wordpress.svg',
     ],
   };
+
