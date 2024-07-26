@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from './Button'
 import Card from './Card'
+import cardList from "../constants/data"
 
 const ProductList = () => {
   return (
@@ -19,8 +20,10 @@ const ProductList = () => {
             />
           </div>
         </div>
-        <div className="py-8">
-          <Card />
+        <div className="py-8 flex gap-6">
+        {cardList.map((product, index) => (
+            <Card key={index} img={product.img} title={product.title} text={product.text} />
+          ))}
         </div>
     </section>
   )
