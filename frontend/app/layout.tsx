@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 
 export const metadata: Metadata = {
-  title: "companyName",
+  title: "TeeGenius",
   description: "t-shirt print be AI prompt company",
 };
 
@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Navbar/>
-        <main className="relative overflow-hidden">
+        <main className="relative overflow-hidden pt-20">
           {children}
         </main>
         <Footer />

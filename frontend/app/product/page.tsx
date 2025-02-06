@@ -7,7 +7,7 @@ import Link from "next/link"
 
 function Product() {
   return (
-    <section className="max-container padding-container flex-col gap-20 py-22 pb-32 md-gap-28 lg:py-20 xl:flex-row">
+    <section className="max-container padding-container flex-col gap-20 md-gap-28 xl:flex-row">
       <div className="pb-20 ">
         <div className="flexBetween">
           <div>
@@ -21,9 +21,9 @@ function Product() {
             />
           </div>
         </div>
-        <div className="py-8 grid grid-cols-4 gap-4 ">
+        <div className="py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
           {cardList.map((product, index) => (
-            <Card key={index} img={product.img} title={product.title} text={product.text} />
+            <Card key={index} img={product.img} title={product.title} price={product.price} id={product.id} />
           ))}
         </div>
       </div>
@@ -41,10 +41,10 @@ function Product() {
             />
           </div>
         </div>
-        <div className="py-8 grid grid-cols-4 gap-4">
+        <div className="py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {cardList.map((product,index) => (
 
-              <Card key={index} img={product.img} title={product.title} text={product.text} id={product.id} />
+              <Card key={index} img={product.img} title={product.title} price={product.price} id={product.id} />
 
             
           ))}

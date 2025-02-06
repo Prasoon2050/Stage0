@@ -15,7 +15,7 @@ const HeroHeader = () => {
         <Button 
           type="button"
           title="Shop"
-          variant="btn_dark_green"
+          variant="btn_dark"
         />
       </div>
 

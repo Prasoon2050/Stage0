@@ -4,7 +4,7 @@ import Button from './Button'
 
 const Newsletter = () => {
   return (
-    <section className="max-container padding-container flex gap-20 py-22 pb-32 md-gap-28 lg:py-20">
+    <section className="max-container padding-container flex gap-20 py-22 pb-32 md-gap-28 lg:py-20 ">
       <div>
         <h2 className="bold-32 lg:bold-40 pb-8">Stay Updated with New Designs</h2>
         <p className="pb-8">Subscribe to our newsletter for the latest design possibilities and special offers.</p>
@@ -19,7 +19,7 @@ const Newsletter = () => {
         <Button 
           type="button"
           title="Subscribe"
-          variant="btn_dark_green"
+          variant="btn_dark"
         />
         </form>
 
