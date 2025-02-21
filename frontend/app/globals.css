@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -15,30 +15,30 @@ body {
 }
 
 @layer utilities {
-
-  
-  .btn_white { 
-    @apply  border-white bg-white px-8 py-3 text-green-50
+  .hoverEffect {
+    @apply transition-all ease-in-out duration-300 cursor-pointer;
   }
-  .btn_white_text  { 
-    @apply  border-black bg-white px-8 py-3 text-gray-90
+  .btn_white {
+    @apply border-white bg-white px-8 py-3 text-green-50;
   }
-  .btn_green  { 
-    @apply  border-green-50 bg-green-50 px-8 py-5 text-white
+  .btn_white_text {
+    @apply border-black bg-white px-8 py-3 text-gray-90;
   }
-  .btn_dark{ 
-    @apply  bg-green-90 px-8 py-4 text-white transition-all hover:bg-black
+  .btn_green {
+    @apply border-green-50 bg-green-50 px-8 py-5 text-white;
   }
-  .btn_dark_green_outline  { 
-    @apply border-gray-20 bg-green-90 px-8 py-5 text-white
+  .btn_dark {
+    @apply bg-green-90 px-6 py-3 text-white transition-all hover:bg-black;
+  }
+  .btn_dark_green_outline {
+    @apply border-gray-20 bg-green-90 px-8 py-5 text-white;
   }
 
   /* Hide scrollbar for Webkit browsers */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 
-  
   .max-container {
     @apply mx-auto max-w-[1440px];
   }
@@ -63,7 +63,7 @@ body {
     @apply flex items-center justify-end;
   }
 
-  .align-centre{
+  .align-centre {
     @apply text-center;
   }
 
@@ -167,5 +167,3 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-
-

@@ -2,12 +2,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { getLocalStorgeToken } from "../../components/getToken";
 import Button from "@/components/Button";
 import Image from "next/image";
 
 const LoginPage = () => {
-  const token = getLocalStorgeToken();
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (token) {
       window.location.href = "/product";
@@ -19,8 +18,8 @@ const LoginPage = () => {
     email: "",
     password: "",
     username: "",
-    firstName: "", 
-    lastName: "", 
+    firstName: "",
+    lastName: "",
     phone: "",
   });
 
@@ -31,22 +30,22 @@ const LoginPage = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
       const url = isLogin
         ? "http://localhost:5000/api/login"
         : "http://localhost:5000/api/signup";
       const response = await axios.post(url, formData);
-     
+
       const { token } = response.data;
       if (token) {
         localStorage.setItem("token", token);
+        console.log("Token:", token);
         window.location.reload();
       }
     } catch (error) {
@@ -57,68 +56,73 @@ const LoginPage = () => {
   return (
     <div className="flex h-screen items-center justify-center p-4">
       <div className="relative w-2/3 h-3/4 shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row">
-        <Image src="/Background3.gif" layout="fill" objectFit="cover" alt="background" className="flex -z-10 " />
-        <div className="bg-transparent backdrop-blur-sm relative w-full md:w-1/2 hidden md:block">
-          
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <Image 
-          src="/Tee.png" 
-          alt="Website logo" 
-          height={800} 
-          width={800} 
-          objectFit="contain" 
-          className=""
+        <Image
+          src="/Background3.gif"
+          layout="fill"
+          objectFit="cover"
+          alt="background"
+          className="flex -z-10 "
         />
-      </div>
+        <div className="bg-transparent backdrop-blur-sm relative w-full md:w-1/2 hidden md:block">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <Image
+              src="/Tee.png"
+              alt="Website logo"
+              height={800}
+              width={800}
+              objectFit="contain"
+              className=""
+            />
+          </div>
         </div>
-        <div className="bg-transparent backdrop-blur-3xl w-full md:w-1/2 flex flex-col justify-center items-center p-8">
+        <div className="bg-transparent backdrop-blur-2xl w-full md:w-1/2 flex flex-col justify-center items-center p-8">
           <h2 className="text-3xl mb-6">{isLogin ? "Login" : "Sign Up"}</h2>
           <form className="space-y-4 w-full" onSubmit={handleSubmit}>
             {!isLogin && (
               <div>
-              <div className="flex flex-col">
-                <label htmlFor="username">Username</label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="border rounded-md px-3 py-2"
-                />
+                <div className="flex flex-col">
+                  <label htmlFor="username">Username</label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    className="border rounded-md px-3 py-2"
+                  />
                 </div>
                 <div className="flex flex-col">
-                <label htmlFor="firstName">firstName</label>
-                <input
-                  type="firstName"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="border rounded-md px-3 py-2"
-                />
+                  <label htmlFor="firstName">firstName</label>
+                  <input
+                    type="firstName"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="border rounded-md px-3 py-2"
+                  />
                 </div>
                 <div className="flex flex-col">
-                <label htmlFor="lastName">lastName</label>
-                <input
-                  type="lastName"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="border rounded-md px-3 py-2"
-                />
+                  <label htmlFor="lastName">lastName</label>
+                  <input
+                    type="lastName"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="border rounded-md px-3 py-2"
+                  />
                 </div>
                 <div className="flex flex-col">
-                <label htmlFor="phone">Phone</label>
-                <input
-                  type="phone"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="border rounded-md px-3 py-2"
-                />
+                  <label htmlFor="phone">Phone</label>
+                  <input
+                    type="phone"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="border rounded-md px-3 py-2"
+                  />
                 </div>
               </div>
             )}
@@ -145,10 +149,20 @@ const LoginPage = () => {
               />
             </div>
 
-            <Button type="submit" title={isLogin ? "Login" : "Sign Up"} variant="btn_dark" icon="" />
+            <Button
+              type="submit"
+              title={isLogin ? "Login" : "Sign Up"}
+              variant="btn_dark"
+              icon=""
+            />
           </form>
-          <p className="mt-4 cursor-pointer text-blue-500 hover:underline" onClick={handleToggleForm}>
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
+          <p
+            className="mt-4 cursor-pointer text-blue-500 hover:underline"
+            onClick={handleToggleForm}
+          >
+            {isLogin
+              ? "Don't have an account? Sign up"
+              : "Already have an account? Login"}
           </p>
         </div>
       </div>

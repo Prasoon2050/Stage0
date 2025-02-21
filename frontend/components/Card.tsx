@@ -1,8 +1,16 @@
 'use client'
 import { useRouter } from 'next/navigation'
 
-function Card({ img, title, price, id }) {
+interface CardProps {
+  img: string;
+  title: string;
+  price: number;
+  id: string;
+}
+
+function Card({ img, title, price, id }: CardProps) {
   const router = useRouter();
+
 
   return (
     <div className="rounded-lg min-w-[200px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[300px]" >

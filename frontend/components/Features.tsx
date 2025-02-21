@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Button from './Button'
 
 const Features = () => {
+  
   return (
     <div className="max-container padding-container flexBetween gap-20 py-22 pb-32 md-gap-28 lg:py-20 flex-col sm:flex-row">
       <div className="pading-container">

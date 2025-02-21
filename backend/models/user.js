@@ -50,7 +50,8 @@ const userSchema = new Schema({
   ],
   cart: [
     {
-      type: String,
+      productId: String,
+      productQuantity: Number,
     },
   ],
 });
