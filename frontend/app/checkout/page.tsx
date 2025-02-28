@@ -39,7 +39,7 @@ const Page = () => {
   if (isBuyNow) {
     if (isBuyNow && cartItems) {
       const token = localStorage.getItem("token");
-      fetch("http://localhost:5000/api/add-to-cart", {
+      fetch("http://localhost:5000/api/check-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

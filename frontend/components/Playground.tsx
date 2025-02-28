@@ -642,7 +642,7 @@ export default function Playground() {
             }`}
           >
             <Image
-              src={`/colours/front.png`}
+              src={`/colours/front${selectedColor}.png`}
               alt="Front View"
               width={50}
               height={50}
@@ -655,7 +655,7 @@ export default function Playground() {
             }`}
           >
             <Image
-              src={`/colours/back.png`}
+              src={`/colours/back${selectedColor}.png`}
               alt="Back View"
               width={50}
               height={50}

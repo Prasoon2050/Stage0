@@ -67,6 +67,11 @@ function ProductDetails() {
 
   const addToCart = async () => {
     try {
+      //if user not logged in redirect to login page
+      if (!localStorage.getItem("token")) {
+        window.location.href = "/login";
+        return;
+      }
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/add-to-cart", {
         method: "POST",
@@ -83,6 +88,9 @@ function ProductDetails() {
         console.log("Product added to cart successfully");
         window.location.href = "/cart";
       } else {
+        if (response.status === 401) {
+          window.location.href = "/login";
+        }
         console.error(data.message);
       }
     } catch (error) {
@@ -94,11 +102,25 @@ function ProductDetails() {
   const quantities = { 1: 1 };
   const BuyNow = true;
   const handleCheckoutClick = () => {
+    if (!localStorage.getItem("token")) {
+      window.location.href = "/login";
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const isExpired = payload.exp * 1000 < Date.now();
+      if (isExpired) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+    }
     if (product) {
       localStorage.setItem("buyNowProductId", JSON.stringify(product._id));
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       localStorage.setItem("quantities", JSON.stringify(quantities));
       localStorage.setItem("BuyNow", JSON.stringify(BuyNow));
+      window.location.href = "/checkout";
     }
   };
 
@@ -180,9 +202,9 @@ function ProductDetails() {
               >
                 Add to Cart
               </button>
-              <Link href="/checkout" onClick={handleCheckoutClick}>
+              <div onClick={handleCheckoutClick}>
                 <Button type="button" title="Buy Now" variant="btn_dark" />
-              </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -103,7 +103,31 @@ router.post("/add-to-cart", verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.cart.push({ productId, productQuantity });
+    const product = user.cart.find((item) => item.productId === productId);
+    if (!product) {
+      user.cart.push({ productId, productQuantity });
+    }
+    await user.save();
+
+    res.status(200).json({ message: "Product added to cart successfully" });
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/check-to-cart", verifyToken, async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userEmail = req.user.email;
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const product = user.cart.find((item) => item.productId === productId);
+    if (!product) {
+      user.cart.push({ productId, productQuantity: 1 });
+    }
     await user.save();
 
     res.status(200).json({ message: "Product added to cart successfully" });
@@ -124,6 +148,22 @@ router.get("/cart-list", verifyToken, async (req, res) => {
     const productIds = user.cart.map((item) => item.productId);
     const products = await Product.find({ _id: { $in: productIds } });
     res.status(200).json(products);
+  } catch (error) {
+    console.error("Error retrieving cart products:", error);
+    res.status(500).json({ message: "Error retrieving cart products", error });
+  }
+});
+
+//get product's count from user's cart
+router.get("/cart-count", verifyToken, async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const user = await User.findOne({ email: userEmail }).populate("cart");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const products = user.cart;
+    res.status(200).json(products.length);
   } catch (error) {
     console.error("Error retrieving cart products:", error);
     res.status(500).json({ message: "Error retrieving cart products", error });
@@ -237,7 +277,6 @@ router.put("/cart/decrement/:productId", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // Add address route
 router.post("/add-address", verifyToken, async (req, res) => {

@@ -43,5 +43,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+// get api to get products on basis of category
+router.get("/category/:category", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    const products = await Product.find({ category: req.params.category })
+      .skip(skip)
+      .limit(limit);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving products", error });
+  }
+});
 
 module.exports = router;
