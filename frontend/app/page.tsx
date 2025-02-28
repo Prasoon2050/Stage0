@@ -2,20 +2,19 @@
 import HeroHeader from "@/components/HeroHeader"
 import Newsletter from "@/components/Newsletter"
 import ProductList from "@/components/ProductList"
-import Review from "@/components/Review"
 
 export default function Home() {
   return (
-    <main>
-      <div className="bg-gray-10">
+    <main className="min-h-screen">
+      <section className="bg-gray-10">
         <HeroHeader />
-      </div>
-      
-      <ProductList />
-      <div className="bg-gray-10">
+      </section>
+      <section className="py-10">
+        <ProductList />
+      </section>
+      <section className="bg-gray-10">
         <Newsletter />
-      </div>
-      
+      </section>
     </main>
   );
 }

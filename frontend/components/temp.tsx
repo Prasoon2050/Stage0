@@ -35,17 +35,6 @@ import TextUploadDialog from "./LeftSide/TextUpload/TextUploadDialog";
 import RightSidebar from "./RightSide/RightSidebar";
 
 /* ------------------
-   Override Fabric's toObject to include custom "myId" property
--------------------- */
-if (typeof fabric !== "undefined") {
-  fabric.Object.prototype.toObject = (function (toObject) {
-    return function (this: fabric.Object, propertiesToInclude?: string[]) {
-      return toObject.call(this, ["myId"].concat(propertiesToInclude || []));
-    };
-  })(fabric.Object.prototype.toObject);
-}
-
-/* ------------------
    Types & Interfaces
 -------------------- */
 export interface CanvasElement {
@@ -56,19 +45,19 @@ export interface CanvasElement {
   fabricObject?: fabric.FabricObject;
 }
 
-interface CanvasStates {
-  front: any;
-  back: any;
-}
-
 interface SortableItemProps {
   item: CanvasElement;
   selectedElement: CanvasElement | null;
   onSelect: (id: string) => void;
 }
 
+interface CanvasStates {
+  front: any;
+  back: any;
+}
+
 export default function Playground() {
-  // T‑shirt customization states
+  // T-Shirt Customization States
   const [selectedColor, setSelectedColor] = useState("white");
   const [selectedSize, setSelectedSize] = useState("Small");
   const [selectedMaterial, setSelectedMaterial] = useState("Polyester");
@@ -77,7 +66,7 @@ export default function Playground() {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [showTextDialog, setShowTextDialog] = useState(false);
 
-  // Canvas & layer states
+  // Canvas & Layer States
   const [frontElements, setFrontElements] = useState<CanvasElement[]>([]);
   const [backElements, setBackElements] = useState<CanvasElement[]>([]);
   const [canvasStates, setCanvasStates] = useState<CanvasStates>({
@@ -90,18 +79,19 @@ export default function Playground() {
     null
   );
 
-  // Fabric.js setup
+  // Fabric.js Setup
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstance = useRef<fabric.Canvas | null>(null);
 
   // DnD sensors
   const sensors = useSensors(useSensor(PointerSensor));
 
-  // T‑shirt customization options
+  // T-Shirt customization options
+  const colors = ["white", "gray", "blue", "red", "black", "darkgray", "green"];
   const sizes = ["Small", "Medium", "Large", "XL"];
   const materials = ["Polyester", "Dri Fit"];
 
-  // Initialize Fabric.js canvas
+  // Initialize Fabric.js
   useEffect(() => {
     if (canvasRef.current && !canvasInstance.current) {
       canvasInstance.current = new fabric.Canvas(canvasRef.current, {
@@ -112,15 +102,10 @@ export default function Playground() {
     }
   }, []);
 
-  // Determine current elements array and setter based on view
-  const currentElements = view === "front" ? frontElements : backElements;
-  const setCurrentElements =
-    view === "front" ? setFrontElements : setBackElements;
-
-  // Save current canvas state to canvasStates
+  // Switch Views (front/back)
   const saveCurrentCanvasState = () => {
     if (canvasInstance.current) {
-      const json = canvasInstance.current.toJSON(); // "myId" is included via override
+      const json = canvasInstance.current.toJSON();
       setCanvasStates((prev) => ({
         ...prev,
         [view]: json,
@@ -128,46 +113,25 @@ export default function Playground() {
     }
   };
 
-  // Load canvas state from canvasStates and update currentElements accordingly
   const loadCanvasState = (viewKey: "front" | "back") => {
     if (canvasInstance.current) {
-      const canvas = canvasInstance.current;
-      // Clear the canvas to prevent duplicates
-      canvas.clear();
-      canvas.backgroundColor = "transparent";
       const state = canvasStates[viewKey];
       if (state) {
-        canvas.loadFromJSON(state, () => {
-          canvas.calcOffset();
-          canvas.renderAll();
-          // After loading, update currentElements based on canvas objects
-          const objects = canvas.getObjects();
-          const newElements: CanvasElement[] = objects.map((obj) => ({
-            id: (obj as any).myId,
-            type: obj.type === "image" ? "image" : "text",
-            src:
-              obj.type === "image" ? (obj as fabric.Image).getSrc() : undefined,
-            text: obj.type === "text" ? (obj as fabric.Text).text : undefined,
-            fabricObject: obj,
-          }));
-          if (viewKey === "front") {
-            setFrontElements(newElements);
-          } else {
-            setBackElements(newElements);
-          }
+        canvasInstance.current.loadFromJSON(state, () => {
+          canvasInstance.current?.calcOffset();
+          canvasInstance.current?.renderAll();
+          setTimeout(() => {
+            canvasInstance.current?.renderAll();
+          }, 0);
         });
       } else {
-        canvas.renderAll();
-        if (viewKey === "front") {
-          setFrontElements([]);
-        } else {
-          setBackElements([]);
-        }
+        canvasInstance.current.clear();
+        canvasInstance.current.backgroundColor = "transparent";
+        canvasInstance.current.renderAll();
       }
     }
   };
 
-  // When switching views, save current state, update view, then load new state
   const handleViewSwitch = (newView: "front" | "back") => {
     if (newView === view) return;
     saveCurrentCanvasState();
@@ -175,32 +139,14 @@ export default function Playground() {
     setSelectedElement(null);
   };
 
-  // Load canvas state when view changes
   useEffect(() => {
     loadCanvasState(view);
-  }, [view]);
+  }, [view, canvasStates]);
 
-  // Reorder layers when currentElements changes
-  useEffect(() => {
-    if (!canvasInstance.current) return;
-    const canvas = canvasInstance.current;
-    // Clear the canvas completely before re-adding objects
-    canvas.clear();
-    canvas.backgroundColor = "transparent";
-    const newOrder = currentElements
-      .map((el) => el.fabricObject)
-      .filter((obj) => obj !== undefined) as fabric.Object[];
-
-    const reversedOrder = [...newOrder].reverse();
-    reversedOrder.forEach((obj) => canvas.remove(obj));
-    reversedOrder.forEach((obj) => {
-      canvas.add(obj);
-      obj.setCoords();
-    });
-
-    canvas.calcOffset();
-    canvas.renderAll();
-  }, [currentElements, view]);
+  // Determine current elements array
+  const currentElements = view === "front" ? frontElements : backElements;
+  const setCurrentElements =
+    view === "front" ? setFrontElements : setBackElements;
 
   // Track selection in canvas
   useEffect(() => {
@@ -231,12 +177,31 @@ export default function Playground() {
     };
   }, [currentElements]);
 
-  // Upload & add image to canvas
+  // Reorder Layers
+  useEffect(() => {
+    if (!canvasInstance.current) return;
+    const canvas = canvasInstance.current;
+    const newOrder = currentElements
+      .map((el) => el.fabricObject)
+      .filter((obj) => obj !== undefined) as fabric.Object[];
+
+    const reversedOrder = [...newOrder].reverse();
+    reversedOrder.forEach((obj) => canvas.remove(obj));
+    reversedOrder.forEach((obj) => {
+      canvas.add(obj);
+      obj.setCoords();
+    });
+
+    canvas.calcOffset();
+    canvas.renderAll();
+  }, [currentElements, view]);
+
+  // Upload & Add Elements
   const handleNewUpload = (uploadedImage: string | null) => {
     if (!uploadedImage || !canvasInstance.current) return;
     (async () => {
       try {
-        const img = await fabric.Image.fromURL(uploadedImage, {
+        const img = await fabric.FabricImage.fromURL(uploadedImage, {
           crossOrigin: "anonymous",
         });
         const id = uuidv4();
@@ -264,7 +229,7 @@ export default function Playground() {
         setCurrentElements((prev) => [newElement, ...prev]);
         setSelectedElement(newElement);
       } catch (error) {
-        console.error("Error loading image:", error);
+        console.error("Error loading image via FabricImage.fromURL:", error);
       }
     })();
   };
@@ -293,7 +258,7 @@ export default function Playground() {
     setSelectedElement(newElement);
   };
 
-  // Layers panel: select layer from list
+  // Layers Panel
   const handleSelectLayer = (layerId: string) => {
     const layer = currentElements.find((el) => el.id === layerId);
     if (layer && layer.fabricObject && canvasInstance.current) {
@@ -314,7 +279,7 @@ export default function Playground() {
     setCurrentElements(reordered);
   };
 
-  // Sortable item for layer list
+  // SortableItem
   function SortableItem({
     item,
     selectedElement,
@@ -361,7 +326,7 @@ export default function Playground() {
     );
   }
 
-  // RightSidebar actions
+  // RightSidebar Action Handlers
   const handleDeleteSelected = () => {
     if (!selectedElement || !canvasInstance.current) return;
     if (selectedElement.fabricObject) {
@@ -373,6 +338,7 @@ export default function Playground() {
     setSelectedElement(null);
   };
 
+  // Fix duplication by passing empty array as second argument
   const handleDuplicateSelected = () => {
     if (!selectedElement || !canvasInstance.current) return;
     const canvas = canvasInstance.current;
@@ -380,7 +346,9 @@ export default function Playground() {
 
     if (selectedElement.type === "image") {
       const originalImg = selectedElement.fabricObject as fabric.Image;
+      // Get the underlying HTMLImageElement
       const imgEl = originalImg.getElement();
+      // Create a new Fabric image using the same DOM element
       const newImg = new fabric.Image(imgEl, {
         left: (originalImg.left ?? 0) + 20,
         top: (originalImg.top ?? 0) + 20,
@@ -429,6 +397,7 @@ export default function Playground() {
     }
   };
 
+  // onResize can handle text size or image scaling
   const handleResizeSelected = (
     scaleX?: number,
     scaleY?: number,
@@ -447,6 +416,7 @@ export default function Playground() {
       return;
     }
 
+    // For text or other objects, handle differently...
     if (selectedElement.type === "text" && scaleX) {
       const textObj = selectedElement.fabricObject as fabric.Text;
       textObj.set("fontSize", scaleX);
@@ -455,6 +425,7 @@ export default function Playground() {
       return;
     }
 
+    // Basic scale fallback
     selectedElement.fabricObject?.scale(1.1);
     selectedElement.fabricObject?.setCoords();
     canvas.renderAll();
@@ -469,6 +440,7 @@ export default function Playground() {
     }
   };
 
+  // Additional text features
   const handleEditText = (newText: string) => {
     if (!selectedElement || selectedElement.type !== "text") return;
     (selectedElement.fabricObject as fabric.Text).set("text", newText);
@@ -560,6 +532,7 @@ export default function Playground() {
     <div className="flex max-container padding-container bg-gray-100">
       {/* LEFT SIDEBAR */}
       <div className="flex gap-5">
+        {/* Primary buttons sidebar */}
         <div className="w-20 my-14 bg-white shadow-md flex flex-col items-center p-4 space-y-6 rounded-lg">
           <div className="flex flex-col items-center space-y-6">
             <button
@@ -663,16 +636,13 @@ export default function Playground() {
           </button>
         </div>
         <div className="relative w-[450px] h-[400px]">
-          <div className="flex w-full h-full">
-            <Image
-              src={`/colours/${view + selectedColor}.png`}
-              alt="T-Shirt"
-              width={450}
-              height={400}
-              className="object-cover bg-none"
-            />
-          </div>
-
+          <Image
+            src={`/colours/${view}.png`}
+            alt="T-Shirt"
+            width={450}
+            height={400}
+            className="object-cover"
+          />
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
             <canvas
               ref={canvasRef}
@@ -701,6 +671,7 @@ export default function Playground() {
         onDuplicate={handleDuplicateSelected}
         onResize={handleResizeSelected}
         onChangeColor={handleChangeColor}
+        // Additional text features
         onEditText={handleEditText}
         onSelectFont={handleSelectFont}
         onToggleBold={handleToggleBold}
