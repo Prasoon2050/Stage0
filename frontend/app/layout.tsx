@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="bg-white text-gray-900 flex flex-col min-h-screen">
         <Navbar />
-        <main className="relative overflow-hidden pt-20 flex-1">
+        <main className="relative pt-20 flex-1">
           {children}
         </main>
         <Footer />

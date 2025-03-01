@@ -1,12 +1,11 @@
-import { ShoppingBag } from 'lucide-react'
-import Link from 'next/link'
-import React from 'react'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+import { useEffect, useState } from "react";
 
 //call the api cart count to get a count of the items in the cart and then display that number in the cart icon
 const CartIcon = () => {
-  const [cartCount, setCartCount] = useState(0)
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -17,7 +16,7 @@ const CartIcon = () => {
         }
         const token = localStorage.getItem("token");
         if (token) {
-          const payload = JSON.parse(atob(token.split('.')[1]));
+          const payload = JSON.parse(atob(token.split(".")[1]));
           const isExpired = payload.exp * 1000 < Date.now();
           if (isExpired) {
             localStorage.removeItem("token");
@@ -32,23 +31,24 @@ const CartIcon = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
         const data = await response.json();
-        setCartCount(data)
+        setCartCount(data);
       } catch (error) {
-        console.error('Error fetching cart count:', error)
+        console.error("Error fetching cart count:", error);
       }
-    }
+    };
 
-    fetchCartCount()
-  }, [])
+    fetchCartCount();
+  }, []);
 
   return (
-    <Link href='/cart' className='group relative'>
-        <ShoppingBag className='w-6 h-6 group-hover:text-black hoverEffect' />
-        <span className='absolute -top-1 -right-1 bg-black text-white h-3.5 w-3.5 rounded-full text-xs font-semibold flex items-center justify-center'>{cartCount}</span>
+    <Link href="/cart" className="group relative">
+      <ShoppingBag className="w-6 h-6 group-hover:text-black hoverEffect" />
+      <span className="absolute -top-1 -right-1 bg-black text-white h-3.5 w-3.5 rounded-full text-xs font-semibold flex items-center justify-center">
+        {cartCount}
+      </span>
     </Link>
-  )
-}
+  );
+};
 
-export default CartIcon
+export default CartIcon;

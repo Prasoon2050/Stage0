@@ -1,11 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import axios from "axios";
 import Button from "@/components/Button";
 import Image from "next/image";
 
-const LoginPage = () => {
+interface LoginDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function LoginPage({
+  open,
+  onClose,
+}:LoginDialogProps){
   const token = localStorage.getItem("token");
   useEffect(() => {
     if (token) {
@@ -54,14 +62,15 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center p-4">
-      <div className="relative w-2/3 h-3/4 shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row">
+    <Dialog open={open} onOpenChange={onClose}>
+    <DialogContent className="max-w-5xl w-3/4 h-5/6 p-0 rounded-lg">
+      <div className="relative shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row">
         <Image
           src="/Background3.gif"
           layout="fill"
           objectFit="cover"
           alt="background"
-          className="flex -z-10 "
+          className="flex -z-10"
         />
         <div className="bg-transparent backdrop-blur-sm relative w-full md:w-1/2 hidden md:block">
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -75,7 +84,7 @@ const LoginPage = () => {
             />
           </div>
         </div>
-        <div className="bg-transparent backdrop-blur-2xl w-full md:w-1/2 flex flex-col justify-center items-center p-8">
+        <div className="bg-transparent backdrop-blur-sm md:backdrop-blur-2xl w-full h-full md:w-1/2 flex flex-col justify-center items-center p-8">
           <h2 className="text-3xl mb-6">{isLogin ? "Login" : "Sign Up"}</h2>
           <form className="space-y-4 w-full" onSubmit={handleSubmit}>
             {!isLogin && (
@@ -166,8 +175,7 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
-    </div>
+    </DialogContent>
+    </Dialog>
   );
 };
-
-export default LoginPage;

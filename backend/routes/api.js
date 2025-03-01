@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 require("dotenv").config();
 
+// verifyToken
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -25,7 +26,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// Register route
+// Register/Signup route
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password, firstName, lastName, phone } = req.body;
@@ -94,7 +95,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Add to cart route
+// Add to user's cart route
 router.post("/add-to-cart", verifyToken, async (req, res) => {
   try {
     const { productId, productQuantity } = req.body;
@@ -116,6 +117,7 @@ router.post("/add-to-cart", verifyToken, async (req, res) => {
   }
 });
 
+// Check the product is in the cart and if not then add to user's cart
 router.post("/check-to-cart", verifyToken, async (req, res) => {
   try {
     const { productId } = req.body;

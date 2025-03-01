@@ -20,16 +20,15 @@
 
 // export default page;
 
-
-import Playground from '@/components/Playground'
-import React from 'react'
+import Playground from "@/components/Playground";
+import React from "react";
 
 const page = () => {
   return (
     <div>
       <Playground />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

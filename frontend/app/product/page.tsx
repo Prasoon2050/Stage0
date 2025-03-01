@@ -11,20 +11,35 @@ function Product() {
     imageUrl: string;
   }
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [trending, setTrending] = useState<Product[]>([]);
+  const [latest, setLatest] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchTrending = async () => {
       try {
-        const response = await fetch("http://localhost:5000/product/");
+        const response = await fetch("http://localhost:5000/product/category/Trending");
         const data = await response.json();
-        setProducts(data);
+        setTrending(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
-    fetchProducts();
+    fetchTrending();
+  }, []);
+
+  useEffect(() => {
+    const fetchLatest = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/product/category/Latest");
+        const data = await response.json();
+        setLatest(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchLatest();
   }, []);
 
   return (
@@ -39,7 +54,7 @@ function Product() {
           </div>
         </div>
         <div className="py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-          {products.map((product, index) => (
+          {trending.map((product, index) => (
             <Card
               key={index}
               img={product.imageUrl}
@@ -61,7 +76,7 @@ function Product() {
           </div>
         </div>
         <div className="py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.map((product, index) => (
+          {latest.map((product, index) => (
             <Card
               key={index}
               img={product.imageUrl}

@@ -25,19 +25,19 @@ const AmountSummary: React.FC<AmountSummaryProps> = ({
   const total = subtotal + tax;
 
   return (
-    <div className="bg-white">
+    <div className="flex flex-col space-y-2 w-full bg-white">
       <h1 className="bold-32 lg:bold-40 pb-5 flex justify-center">Summary</h1>
-      <div className="flex justify-between w-full border-b-2">
+      <div className="flex justify-between w-full">
         <p>Subtotal</p>
         <p>Rs {subtotal}</p>
       </div>
-      <div className="border-t my-2" />
-      <div className="flex justify-between w-full border-b-2">
+      <div className="border-t" />
+      <div className="flex justify-between w-full">
         <p>Tax</p>
         <p>Rs {tax}</p>
       </div>
-      <div className="border-t my-2" />
-      <div className="bold-20 lg:bold-32 flex justify-between w-full">
+      <div className="border-t" />
+      <div className="bold-20 lg:text-2xl flex justify-between w-full">
         <h2>Total: Rs {total}</h2>
       </div>
     </div>
