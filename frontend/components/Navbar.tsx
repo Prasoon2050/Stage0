@@ -191,7 +191,8 @@ const Navbar = () => {
                 onMouseEnter={() => setDropdownOpen(true)}
               >
                 {/* Dropdown Header */}
-                <div className="p-4 border-b border-gray-200">
+                {isLoggedIn && (
+                  <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center space-x-3">
                     <Image
                       src="/images/1.webp"
@@ -206,34 +207,38 @@ const Navbar = () => {
                     </div>
                   </div>
                 </div>
+                )}
+                
                 {/* Dropdown Options */}
-                <div className="flex flex-col ">
-                  <Link href="/profile">
+                <div className="flex flex-col">
+                  {/* Note: Each link passes a query parameter (tab) to the ProfilePage */}
+                  <Link href="/profile?tab=personal">
                     <button className="text-left px-4 py-2 w-full hover:bg-gray-100">
                       Profile
                     </button>
                   </Link>
-                  <Link href="/orders">
+                  <Link href="/profile?tab=orders">
                     <button className="text-left px-4 py-2 w-full hover:bg-gray-100">
                       Order History
                     </button>
                   </Link>
-                  <Link href="/my-designs">
+                  <Link href="/profile?tab=designs">
                     <button className="text-left px-4 py-2 w-full hover:bg-gray-100">
                       My Designs
                     </button>
                   </Link>
-                  <Link href="/settings">
+                  <Link href="/profile?tab=settings">
                     <button className="text-left px-4 py-2 w-full hover:bg-gray-100">
                       Account Settings
                     </button>
                   </Link>
-                  <Link href="/notifications">
+                  <Link href="/profile?tab=notifications">
                     <button className="text-left px-4 py-2 w-full hover:bg-gray-100">
                       Notifications
                     </button>
                   </Link>
                 </div>
+                
                 {/* Dropdown Footer */}
                 <div className="border-t border-gray-200">
                   {isLoggedIn ? (
@@ -317,6 +322,10 @@ const Navbar = () => {
         <LoginPage
           open={showLoginDialog}
           onClose={() => setShowLoginDialog(false)}
+          onLoginSuccess={() => {
+            setShowLoginDialog(false);
+            setIsLoggedIn(true);
+          }}
         />
       )}
     </nav>

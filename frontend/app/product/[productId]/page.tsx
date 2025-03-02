@@ -1,10 +1,10 @@
 "use client";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "@/components/Button";
 import Image from "next/image";
 import Cards from "@/components/Card";
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
+import LoginPage from "@/app/login/page";
 
 function ProductDetails() {
   const { productId } = useParams();
@@ -18,8 +18,14 @@ function ProductDetails() {
   }
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [loadingProduct, setLoadingProduct] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkAddToCart, setCheckAddToCart] = useState<string>("Add To Cart");
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const redirectActionRef = useRef<string>("");
 
+  // Fetch single product data
   useEffect(() => {
     if (productId) {
       const fetchProduct = async () => {
@@ -28,7 +34,6 @@ function ProductDetails() {
             `http://localhost:5000/product/${productId}`
           );
           const data = await response.json();
-
           if (response.ok) {
             setProduct(data);
           } else {
@@ -36,13 +41,54 @@ function ProductDetails() {
           }
         } catch (error) {
           console.error("Error fetching product:", error);
+        } finally {
+          setLoadingProduct(false);
         }
       };
-
       fetchProduct();
+    } else {
+      setLoadingProduct(false);
     }
   }, [productId]);
 
+  // Check cart status
+  useEffect(() => {
+    const checkCartStatus = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setCheckAddToCart("Add To Cart");
+          return;
+        }
+
+        const response = await fetch(
+          `http://localhost:5000/api/check-in-cart/${productId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok) {
+          setCheckAddToCart(data.status); // Update button text
+        } else {
+          console.error("Error checking cart status:", data.message);
+        }
+      } catch (error) {
+        console.error("Error checking cart status:", error);
+      }
+    };
+
+    if (productId) {
+      checkCartStatus();
+    }
+  }, [productId]);
+
+  // Fetch other products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -61,17 +107,41 @@ function ProductDetails() {
     fetchProducts();
   }, []);
 
-  if (!product) {
-    return <div>Product not found.</div>;
+  // Show a loading indicator while the product is being fetched
+  if (loadingProduct) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-xl">Loading product...</p>
+      </div>
+    );
   }
 
-  const addToCart = async () => {
+  // If loading is complete and product is still null, display a friendly message
+  if (!product) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-xl">Product not found.</p>
+      </div>
+    );
+  }
+
+  const cartItems = [product];
+  const quantities = { [product._id]: 1 };
+  const BuyNow = true;
+
+  const handleCheckoutClick = () => {
+    if (product) {
+      localStorage.setItem("buyNowProductId", JSON.stringify(product._id));
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      localStorage.setItem("quantities", JSON.stringify(quantities));
+      localStorage.setItem("BuyNow", JSON.stringify(BuyNow));
+      window.location.href = "/checkout";
+    }
+  };
+
+  const handleAddToCart = async () => {
     try {
-      //if user not logged in redirect to login page
-      if (!localStorage.getItem("token")) {
-        window.location.href = "/login";
-        return;
-      }
+      console.log("inside handleAddToCart");
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/add-to-cart", {
         method: "POST",
@@ -81,47 +151,49 @@ function ProductDetails() {
         },
         body: JSON.stringify({ productId: product._id, productQuantity: 1 }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         console.log("Product added to cart successfully");
         window.location.href = "/cart";
       } else {
         if (response.status === 401) {
-          window.location.href = "/login";
+          console.error(data.message);
         }
-        console.error(data.message);
       }
     } catch (error) {
       console.error("Error adding product to cart:", error);
     }
   };
 
-  const cartItems = [product];
-  const quantities = { 1: 1 };
-  const BuyNow = true;
-  const handleCheckoutClick = () => {
-    if (!localStorage.getItem("token")) {
-      window.location.href = "/login";
+  // Check login status and trigger login dialog if needed.
+  const handleLoginCheck = (action: string) => {
+    redirectActionRef.current = action;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsLoggedIn(false);
+      setShowLoginDialog(true);
       return;
     }
-    const token = localStorage.getItem("token");
-    if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const isExpired = payload.exp * 1000 < Date.now();
-      if (isExpired) {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-      }
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const isExpired = payload.exp * 1000 < Date.now();
+    if (isExpired) {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      setShowLoginDialog(true);
+      return;
     }
-    if (product) {
-      localStorage.setItem("buyNowProductId", JSON.stringify(product._id));
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-      localStorage.setItem("quantities", JSON.stringify(quantities));
-      localStorage.setItem("BuyNow", JSON.stringify(BuyNow));
-      window.location.href = "/checkout";
+    setIsLoggedIn(true);
+    handleRedirect(redirectActionRef.current);
+  };
+
+  const handleRedirect = (action: string) => {
+    console.log("Inside handleRedirect, action =", action);
+    if (action === "checkout") {
+      handleCheckoutClick();
+    } else if (action === "addToCart") {
+      handleAddToCart();
     }
+    redirectActionRef.current = "";
   };
 
   return (
@@ -197,12 +269,12 @@ function ProductDetails() {
             <div className="flex justify-center lg:justify-start gap-4 mt-6 lg:mt-0 fixed bottom-0 left-0 w-full bg-white lg:static">
               <button
                 type="button"
-                className="btn_white_text bordergap-20 items-center justify-center rounded-full border"
-                onClick={addToCart}
+                className="btn_white_text gap-20 items-center justify-center rounded-full border"
+                onClick={() => handleLoginCheck("addToCart")}
               >
-                Add to Cart
+                {checkAddToCart}
               </button>
-              <div onClick={handleCheckoutClick}>
+              <div onClick={() => handleLoginCheck("checkout")}>
                 <Button type="button" title="Buy Now" variant="btn_dark" />
               </div>
             </div>
@@ -234,11 +306,19 @@ function ProductDetails() {
           </div>
         </div>
       </div>
+      {showLoginDialog && (
+        <LoginPage
+          open={showLoginDialog}
+          onClose={() => setShowLoginDialog(false)}
+          onLoginSuccess={() => {
+            setShowLoginDialog(false);
+            setIsLoggedIn(true);
+            handleRedirect(redirectActionRef.current);
+          }}
+        />
+      )}
     </div>
   );
 }
 
 export default ProductDetails;
-function post(arg0: string, arg1: { productId: string }) {
-  throw new Error("Function not implemented.");
-}

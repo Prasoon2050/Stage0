@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import useFetchCartData from "@/components/FetchCartData";
 import Image from "next/image";
 import LoginPage from "../login/page";
+import { useRouter } from "next/navigation";
 
 const Cart = () => {
   const { cartItems, quantities, setCartItems, setQuantities, loading } =
@@ -15,6 +16,8 @@ const Cart = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+
+  const router = useRouter();
 
   // Save data in localStorage for checkout
   const handleCheckoutClick = () => {
@@ -68,6 +71,8 @@ const Cart = () => {
       </section>
     );
   }
+
+  const reloading = () => window.location.reload();
 
   return (
     <section className="bg-gray-200 padding-container p-10">
@@ -145,6 +150,11 @@ const Cart = () => {
         <LoginPage
           open={showLoginDialog}
           onClose={() => setShowLoginDialog(false)}
+          onLoginSuccess={() => {
+            setShowLoginDialog(false);
+            setIsLoggedIn(true);
+            reloading();
+          }}
         />
       )}
     </section>

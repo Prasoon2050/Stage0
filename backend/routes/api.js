@@ -95,6 +95,22 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/user-data", verifyToken, async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Exclude sensitive fields like password and __v
+    const { password, __v, ...userData } = user.toObject();
+    res.status(200).json(userData);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // Add to user's cart route
 router.post("/add-to-cart", verifyToken, async (req, res) => {
   try {
@@ -117,24 +133,24 @@ router.post("/add-to-cart", verifyToken, async (req, res) => {
   }
 });
 
-// Check the product is in the cart and if not then add to user's cart
-router.post("/check-to-cart", verifyToken, async (req, res) => {
+router.get("/check-in-cart/:productId", verifyToken, async (req, res) => {
   try {
-    const { productId } = req.body;
+    // Get productId from query params instead of body
+    const productId = req.params.productId;
     const userEmail = req.user.email;
+
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const product = user.cart.find((item) => item.productId === productId);
-    if (!product) {
-      user.cart.push({ productId, productQuantity: 1 });
-    }
-    await user.save();
 
-    res.status(200).json({ message: "Product added to cart successfully" });
+    // Check if product exists in cart
+    const product = user.cart.find((item) => item.productId === productId);
+    const check = product ? "Added" : "Add To Cart";
+
+    res.status(200).json({ status: check });
   } catch (error) {
-    console.error("Add to cart error:", error);
+    console.error("Check in cart error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });

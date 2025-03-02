@@ -10,21 +10,21 @@ import Link from "next/link";
 const heroSlides = [
   {
     id: 1,
-    background: "/hero1.jpg",
+    background: "/images/2.webp",
     title: "Discover Unique AI‑Generated T‑Shirt Designs",
     subtitle:
       "Explore our collection of AI‑designed t‑shirts that reflect your style and personality.",
   },
   {
     id: 2,
-    background: "/hero2.jpg",
+    background: "/images/3.webp",
     title: "Elevate Your Wardrobe",
     subtitle:
       "Find premium, AI‑designed tees that showcase your personal flair.",
   },
   {
     id: 3,
-    background: "/hero3.jpg",
+    background: "/images/4.webp",
     title: "Unleash Your Creativity",
     subtitle:
       "Customize designs with AI and express yourself like never before.",
@@ -40,8 +40,9 @@ const HeroCarousel = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
+    autoplaySpeed: 2500,
+    pauseOnHover: false,
+    pauseOnClick: true,
     arrows: true,
   };
 

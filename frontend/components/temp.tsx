@@ -1,87 +1,95 @@
 "use client";
 import React from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Button from "./Button";
-import Link from "next/link";
+import { Package, Calendar, DollarSign, Eye } from "lucide-react";
 
-// Sample slides (replace with your own images & text)
-const heroSlides = [
-  {
-    id: 1,
-    background: "/hero1.jpg",
-    title: "Discover Unique AI‑Generated T‑Shirt Designs",
-    subtitle:
-      "Explore our collection of AI‑designed t‑shirts that reflect your style and personality.",
-  },
-  {
-    id: 2,
-    background: "/hero2.jpg",
-    title: "Elevate Your Wardrobe",
-    subtitle:
-      "Find premium, AI‑designed tees that showcase your personal flair.",
-  },
-  {
-    id: 3,
-    background: "/hero3.jpg",
-    title: "Unleash Your Creativity",
-    subtitle:
-      "Customize designs with AI and express yourself like never before.",
-  },
-];
+const statusColors: Record<string, string> = {
+  Shipped: "bg-green-500",
+  Processing: "bg-yellow-500",
+  Cancelled: "bg-red-500",
+};
 
-const HeroCarousel = () => {
-  // react-slick settings
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
-    arrows: true,
+const OrderHistory: React.FC = () => {
+  const orders = [
+    {
+      id: "#123456",
+      date: "2025-01-15",
+      status: "Shipped",
+      total: "$99.99",
+    },
+    {
+      id: "#123457",
+      date: "2025-02-10",
+      status: "Processing",
+      total: "$49.99",
+    },
+  ];
+
+  // Status colors
+  const statusColors = {
+    Shipped: "bg-green-500",
+    Processing: "bg-yellow-500",
+    Cancelled: "bg-red-500",
   };
 
   return (
-    <div className="relative w-full">
-      <Slider {...settings}>
-        {heroSlides.map((slide) => (
-          <div key={slide.id} className="relative w-full h-[80vh]">
-            {/* Background Image */}
-            <img
-              src={slide.background}
-              alt="Hero Background"
-              className="w-full h-full object-cover"
-            />
+    <section className="bg-white shadow-lg rounded-xl p-8 mb-6 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-semibold text-gray-800 flex items-center gap-2">
+          <Package size={32} className="text-blue-500" /> Order History
+        </h2>
+      </div>
 
-            {/* Overlay with text & buttons */}
-            <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-center text-white px-4">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
-                {slide.title}
-              </h2>
-              <p className="text-lg md:text-xl mb-8 max-w-2xl">
-                {slide.subtitle}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/create">
-                  <Button
-                    type="button"
-                    title="Create"
-                    variant="btn_white_text"
-                  />
-                </Link>
-
-                <Button type="button" title="Shop" variant="btn_dark" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </Slider>
-    </div>
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-gray-700">
+              <th className="px-6 py-3 text-left">Order ID</th>
+              <th className="px-6 py-3 text-left">Date</th>
+              <th className="px-6 py-3 text-left">Status</th>
+              <th className="px-6 py-3 text-left">Total</th>
+              <th className="px-6 py-3 text-center">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order, index) => (
+              <tr
+                key={index}
+                className="border-t bg-gray-100 hover:bg-gray-200 transition"
+              >
+                <td className="px-6 py-4">{order.id}</td>
+                <td className="px-6 py-4 flex items-center gap-2">
+                  <Calendar size={16} className="text-gray-500" />
+                  {order.date}
+                </td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`text-white px-3 py-1 rounded-full text-sm ${
+                      statusColors[order.status as keyof typeof statusColors] ||
+                      "bg-gray-500"
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 flex items-center gap-2">
+                  <DollarSign size={16} className="text-gray-500" />
+                  {order.total}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition">
+                    <Eye size={16} />
+                    View
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 };
 
-export default HeroCarousel;
+export default OrderHistory;

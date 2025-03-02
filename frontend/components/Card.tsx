@@ -11,6 +11,9 @@ interface CardProps {
 function Card({ img, title, price, id }: CardProps) {
   const router = useRouter();
 
+  const openInNewTab = () => {
+    window.open(`/product/${id}`, '_blank');
+  };
 
   return (
     <div className="rounded-lg min-w-[200px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[300px]" >
@@ -19,7 +22,7 @@ function Card({ img, title, price, id }: CardProps) {
         className="h-auto w-full rounded-lg cursor-pointer transition-all duration-500 hover:scale-125" 
         src={img} 
         alt={title} 
-        onClick={() => router.push(`/product/${id}`)}
+        onClick={openInNewTab}
       />
       </div>
       

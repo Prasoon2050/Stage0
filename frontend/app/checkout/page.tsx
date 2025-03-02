@@ -43,7 +43,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (isBuyNow && cartItems.length > 0) {
       const token = localStorage.getItem("token");
-      fetch("http://localhost:5000/api/check-to-cart", {
+      fetch("http://localhost:5000/api/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
