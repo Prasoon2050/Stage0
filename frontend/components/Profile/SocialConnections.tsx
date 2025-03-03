@@ -24,13 +24,6 @@ const SocialConnections = () => {
       color: "border-red-500",
       connected: true,
     },
-    {
-      id: "twitter",
-      name: "Twitter",
-      icon: <Twitter size={18} className="text-sky-500" />,
-      color: "border-sky-500",
-      connected: false,
-    },
   ];
 
   return (

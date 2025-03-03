@@ -33,7 +33,6 @@ const Notifications = () => {
     setSelectedMethod(method); // Set the selected method
     setPopupOpen(true); // Ensure popup opens
   };
-  
 
   return (
     <div className="grid grid-cols-3 gap-6 bg-gray-100 p-6 rounded-lg shadow-lg">
@@ -57,14 +56,13 @@ const Notifications = () => {
         <div className="space-y-3">
           {notificationMethods.map((method) => (
             <button
-            key={method.id}
-            className="flex items-center gap-3 w-full p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition"
-            onClick={() => handleOpenPopup(method.name)} // ✅ Use handleOpenPopup
-          >
-            {method.icon}
-            {method.name}
-          </button>
-          
+              key={method.id}
+              className="flex items-center gap-3 w-full p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition"
+              onClick={() => handleOpenPopup(method.name)} // ✅ Use handleOpenPopup
+            >
+              {method.icon}
+              {method.name}
+            </button>
           ))}
         </div>
       </section>

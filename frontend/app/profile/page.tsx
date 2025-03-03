@@ -15,18 +15,18 @@ import {
 } from "lucide-react";
 
 // Import sub-components
-import PersonalInfo from "@/components/Profile/PersonalInfo";
+import PersonalInfo from "@/components/Profile/Personal Info/PersonalInfo";
 import AccountSettings from "@/components/Profile/AccountSettings";
 import OrderHistory from "@/components/Profile/OrderHistory";
 import SavedDesigns from "@/components/Profile/SavedDesigns";
 import PaymentShipping from "@/components/Profile/PaymentShipping";
 import Security from "@/components/Profile/Security";
-import Notifications from "@/components/Profile/Notifications";
+import Notifications from "@/components/Profile/Notifications/Notifications";
 import SocialConnections from "@/components/Profile/SocialConnections";
 import { useSearchParams } from "next/navigation";
 import { useUserContext } from "@/constants/UserContext";
 import { useState } from "react";
-import ManageAddresses from "@/components/Profile/ManageAddresses";
+import ManageAddresses from "@/components/Profile/Address/ManageAddresses";
 
 export default function ProfilePage() {
   const searchParams = useSearchParams();

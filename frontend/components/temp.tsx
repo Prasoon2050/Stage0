@@ -1,95 +1,131 @@
 "use client";
-import React from "react";
-import { Package, Calendar, DollarSign, Eye } from "lucide-react";
+import React, { useState } from "react";
+import Link from "next/link";
+import DisplayCartList from "@/components/DisplayCartList";
+import AmountSummary from "@/components/checkout/AmountSummary";
+import Button from "@/components/Button";
+import useFetchCartData from "@/components/FetchCartData";
+import Image from "next/image";
+import LoginPage from "../login/page";
+import { useRouter } from "next/navigation";
+import { useUserContext } from "@/constants/UserContext";
 
-const statusColors: Record<string, string> = {
-  Shipped: "bg-green-500",
-  Processing: "bg-yellow-500",
-  Cancelled: "bg-red-500",
-};
+const Cart: React.FC = () => {
+  // Get cart data from your fetch hook.
+  const { cartItems, quantities, setCartItems, setQuantities, loading } =
+    useFetchCartData();
 
-const OrderHistory: React.FC = () => {
-  const orders = [
-    {
-      id: "#123456",
-      date: "2025-01-15",
-      status: "Shipped",
-      total: "$99.99",
-    },
-    {
-      id: "#123457",
-      date: "2025-02-10",
-      status: "Processing",
-      total: "$49.99",
-    },
-  ];
+  // Get user from context; user being non-null means the user is logged in.
+  const { user } = useUserContext();
+  const isLoggedIn = Boolean(user);
+  const cartCount = cartItems.length;
 
-  // Status colors
-  const statusColors = {
-    Shipped: "bg-green-500",
-    Processing: "bg-yellow-500",
-    Cancelled: "bg-red-500",
+  const router = useRouter();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+
+  // Save data in localStorage for checkout.
+  const handleCheckoutClick = () => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    localStorage.setItem("quantities", JSON.stringify(quantities));
   };
 
-  return (
-    <section className="bg-white shadow-lg rounded-xl p-8 mb-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-semibold text-gray-800 flex items-center gap-2">
-          <Package size={32} className="text-blue-500" /> Order History
-        </h2>
-      </div>
+  // Reload page after login to refresh cart data.
+  const reloading = () => window.location.reload();
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse rounded-lg overflow-hidden shadow-md">
-          <thead>
-            <tr className="bg-gray-200 text-gray-700">
-              <th className="px-6 py-3 text-left">Order ID</th>
-              <th className="px-6 py-3 text-left">Date</th>
-              <th className="px-6 py-3 text-left">Status</th>
-              <th className="px-6 py-3 text-left">Total</th>
-              <th className="px-6 py-3 text-center">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order, index) => (
-              <tr
-                key={index}
-                className="border-t bg-gray-100 hover:bg-gray-200 transition"
+  if (loading) {
+    return (
+      <section className="bg-gray-200 padding-container p-10">
+        <div className="flex flex-col w-full items-center max-container padding-container py-10 pb-20 bg-white">
+          <p>Loading cart items...</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="bg-gray-200 padding-container p-10">
+      {isLoggedIn && cartCount > 0 ? (
+        <div className="max-container mx-auto">
+          {/* Grid layout: left column for cart items and right for summary */}
+          <div className="grid md:grid-cols-3 gap-7">
+            {/* Left Column: Cart Items */}
+            <div className="md:col-span-2 bg-white p-10 rounded-xl">
+              <div className="flex justify-between pb-5">
+                <span className="text-3xl font-bold">My Cart</span>
+                <span className="text-gray-400 text-3xl">({cartCount})</span>
+              </div>
+              <DisplayCartList
+                cartItems={cartItems}
+                quantities={quantities}
+                setCartItems={setCartItems}
+                setQuantities={setQuantities}
+              />
+            </div>
+            {/* Right Column: Summary (Sticky) */}
+            <div className="md:col-span-1 relative">
+              <div className="sticky top-10">
+                <div className="bg-white rounded-xl shadow-lg p-10 flex flex-col space-y-5 items-center">
+                  <AmountSummary
+                    cartItems={cartItems}
+                    quantities={quantities}
+                  />
+                  <Link href="/checkout" onClick={handleCheckoutClick}>
+                    <Button
+                      type="button"
+                      title="Proceed to Checkout"
+                      variant="btn_dark"
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // If no cart items (or user not logged in), show an empty cart UI or a login prompt.
+        <div className="flex flex-col w-full items-center max-container padding-container py-10 pb-20 bg-white">
+          <Image
+            src="/emptyCart.jpg"
+            alt="empty cart"
+            height={400}
+            width={400}
+          />
+          {isLoggedIn && cartCount === 0 ? (
+            <div className="flex flex-col w-full items-center space-y-2">
+              <h2 className="text-xl">Your cart is empty!</h2>
+              <p className="text-sm">Add items to it now.</p>
+              <Link href="/product">
+                <Button type="button" title="Shop Now" variant="btn_dark" />
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col w-full items-center space-y-2">
+              <h2 className="text-xl">Missing Cart items?</h2>
+              <p className="text-sm">
+                Login to see the items you added previously.
+              </p>
+              <button
+                className="btn_dark rounded-full"
+                onClick={() => setShowLoginDialog(true)}
               >
-                <td className="px-6 py-4">{order.id}</td>
-                <td className="px-6 py-4 flex items-center gap-2">
-                  <Calendar size={16} className="text-gray-500" />
-                  {order.date}
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`text-white px-3 py-1 rounded-full text-sm ${
-                      statusColors[order.status as keyof typeof statusColors] ||
-                      "bg-gray-500"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 flex items-center gap-2">
-                  <DollarSign size={16} className="text-gray-500" />
-                  {order.total}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition">
-                    <Eye size={16} />
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                Login
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {showLoginDialog && (
+        <LoginPage
+          open={showLoginDialog}
+          onClose={() => setShowLoginDialog(false)}
+          onLoginSuccess={() => {
+            setShowLoginDialog(false);
+            reloading();
+          }}
+        />
+      )}
     </section>
   );
 };
 
-export default OrderHistory;
+export default Cart;

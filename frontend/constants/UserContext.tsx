@@ -10,6 +10,11 @@ interface Address {
   country?: string;
 }
 
+export interface CartItem {
+  _id: string;
+  // Add other cart item properties as needed
+}
+
 interface UserData {
   _id: string;
   username: string;
@@ -20,6 +25,7 @@ interface UserData {
   address?: Address[];
   dateOfBirth?: string;
   gender?: string;
+  cart?: CartItem[];
 }
 
 // Define the context type
@@ -74,7 +80,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     fetchUserData();
-  }, []);
+  }, [user]);
 
   const updateUser = (updatedUser: UserData) => {
     setUser(updatedUser);

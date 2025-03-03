@@ -1,45 +1,13 @@
+"use client";
 import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { useEffect, useState } from "react";
+import { useUserContext } from "@/constants/UserContext";
 
-//call the api cart count to get a count of the items in the cart and then display that number in the cart icon
-const CartIcon = () => {
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    const fetchCartCount = async () => {
-      try {
-        if (!localStorage.getItem("token")) {
-          setCartCount(0);
-          return;
-        }
-        const token = localStorage.getItem("token");
-        if (token) {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          const isExpired = payload.exp * 1000 < Date.now();
-          if (isExpired) {
-            localStorage.removeItem("token");
-            setCartCount(0);
-            return;
-          }
-        }
-        const response = await fetch("http://localhost:5000/api/cart-count", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setCartCount(data);
-      } catch (error) {
-        console.error("Error fetching cart count:", error);
-      }
-    };
-
-    fetchCartCount();
-  }, []);
+const CartIcon: React.FC = () => {
+  const { user } = useUserContext();
+  // If user or cart is undefined, count is 0; otherwise, it's the length of the cart array.
+  const cartCount = user?.cart?.length ?? 0;
 
   return (
     <Link href="/cart" className="group relative">

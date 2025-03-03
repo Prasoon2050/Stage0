@@ -296,6 +296,47 @@ router.put("/cart/decrement/:productId", verifyToken, async (req, res) => {
   }
 });
 
+// Edit the address
+router.put("/address/:id", verifyToken, async (req, res) => {
+  try {
+    const addressId = req.params.id;
+    const { street, city, state, zip, country } = req.body;
+    const userEmail = req.user.email;
+
+    // Find the user by email
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the address index in the user's address array
+    const addressIndex = user.address.findIndex(
+      (address) => address._id.toString() === addressId
+    );
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    // Update the address fields
+    user.address[addressIndex].street = street;
+    user.address[addressIndex].city = city;
+    user.address[addressIndex].state = state;
+    user.address[addressIndex].zip = zip;
+    user.address[addressIndex].country = country;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Address updated successfully",
+      address: user.address[addressIndex],
+    });
+  } catch (error) {
+    console.error("Error updating address:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // Add address route
 router.post("/add-address", verifyToken, async (req, res) => {
   try {
@@ -342,7 +383,6 @@ router.get("/address", verifyToken, async (req, res) => {
 // Delete address
 router.delete("/address/:id", verifyToken, async (req, res) => {
   try {
-    console.log("server here");
     const addressId = req.params.id;
     const userEmail = req.user.email;
     const user = await User.findOne({ email: userEmail });
